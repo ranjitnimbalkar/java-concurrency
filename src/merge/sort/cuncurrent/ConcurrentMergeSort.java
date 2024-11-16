@@ -20,6 +20,7 @@ public class ConcurrentMergeSort<T extends Comparable<T>> implements Callable<Li
 
     @Override
     public List<T> call() throws ExecutionException, InterruptedException {
+
         if(listToSort.size() == 1) {
             return listToSort;
         }
@@ -28,13 +29,8 @@ public class ConcurrentMergeSort<T extends Comparable<T>> implements Callable<Li
         List<T> left = new ArrayList<>();
         List<T> right = new ArrayList<>();
 
-        for(int i = 0; i < mid; i++) {
-            left.add(listToSort.get(i));
-        }
-
-        for (int i = mid; i < listToSort.size(); i++ ) {
-            right.add(listToSort.get(i));
-        }
+        left.addAll(listToSort.subList(0, mid));
+        right.addAll(listToSort.subList(mid, listToSort.size()));
 
         Future<List<T>> leftFuture = executorService.submit(new ConcurrentMergeSort<>(left, executorService));
         Future<List<T>> rightFuture = executorService.submit(new ConcurrentMergeSort<>(right, executorService));
